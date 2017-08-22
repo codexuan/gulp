@@ -1,0 +1,320 @@
+// 兼容性前缀
+$vendor-prefix:    -webkit- -ms- -moz-;
+@mixin prefix($property,$value) {
+	@each $vendor in  $vendor-prefix  {
+		#{$vendor}#{$property}: $value;
+	}
+	#{$property}: $value;
+}
+@mixin animation($animation...) {
+	@include prefix(animation, $animation);
+}
+// checbox矩形样式
+// Element checked(14)
+$checked: (
+    // {String} 选中标记的内容，可以是自定义的webfont
+    content:        "\f078",
+    // {Length} 元件大小
+    size:           20px,
+    // {Length} 标签大小
+    font-size:      12px,
+    // {Length} 边框厚度
+    border-width:   null,
+    // {Color} 未选中时的边框色
+    border-color:    null,
+    // {Color} 未选中时的背景色
+    bgcolor:        null,
+    // {Color} 未选中时的标记颜色
+    color:          transparent,
+    // {Color} 激活边框色
+    on-border-color: null,
+    // {Color} 激活背景色
+    on-bgcolor:     null,
+    // {Color} 激活标记颜色
+    on-color:       #2b94ff,
+    // {Length} 圆角
+    border-radius:  0,
+	// 默认边框色
+    disabled-bordercolor: #ccc,
+    // 默认文档颜色
+    disabled-bgcolor:     #e0e0e0,
+    // 默认禁用文本颜色
+    disabled-color:       #bbb
+) !default;
+
+@mixin _checkbox(
+    $size:default,
+    $font-size:default,
+    $color:default,
+    $bgcolor:default,
+    $border-width:default,
+    $border-color:default,
+    $border-radius:default,
+    $on-bgcolor:default,
+    $on-border-color:default,
+    $on-color:default) {
+    @if $size == default {
+        $size: map-get($checked, size);
+    }
+    @if $font-size == default {
+        $font-size: map-get($checked, font-size);
+    }
+    @if $border-width == default {
+        $border-width: map-get($checked, border-width);
+    }
+    @if $border-color == default {
+        $border-color: map-get($checked, border-color);
+    }
+    @if $bgcolor == default {
+        $bgcolor: map-get($checked, bgcolor);
+    }
+    @if $color == default {
+        $color: map-get($checked, color);
+    }
+    @if $on-border-color == default {
+        $on-border-color: map-get($checked, on-border-color);
+    }
+    @if $on-bgcolor == default {
+        $on-bgcolor: map-get($checked, on-bgcolor);
+    }
+    @if $on-color == default {
+        $on-color: map-get($checked, on-color);
+    }
+    @if $border-radius == default {
+        $border-radius: map-get($checked, border-radius);
+    }
+        display: inline-block;
+        @include square($size);
+        font-size: $font-size;
+        text-align: center;
+        vertical-align: middle;
+        position: relative;
+        > input{
+			cursor: pointer;
+            position: absolute;
+            z-index: 1;
+            left:0;
+            top:0;
+			margin:0;
+            @include square($size);
+        }
+        > label{
+			margin:0;
+			@include square($size);
+            @if $bgcolor != null {
+                background-color: $bgcolor;
+            }
+            @if $border-radius != null {
+                border-radius: $border-radius;
+            }
+            @if $border-color != null {
+                border-color:$border-color;
+            }
+            // 当边框厚度大于0时，才定义边框相关属性
+            @if $border-width != 0 and $border-width != null {
+                border-width:$border-width;
+                border-style: solid;
+                line-height: $size - $border-width * 2;
+            } @else {
+                line-height: $size;
+            }
+        }
+        > input{
+					opacity: 0;
+				  filter:alpha( opacity = 0 );
+        }
+        /**
+        * Move the slider in the correct position if the checkbox is clicked
+        */
+        > input:checked + label {
+            @if $on-bgcolor != null{
+                background-color: $on-bgcolor;
+            }
+            @if $on-border-color != null {
+                border-color:$on-border-color;
+            }
+            @if $on-color != null {
+                color:$on-color;
+            }
+        }
+        > input:disabled + label {
+            opacity: .4;
+            filter: alpha(opacity = 40);
+            color:map-get($checked, disabled-color)!important;
+            @if $border-width != 0 {
+                border-color:map-get($checked, disabled-bordercolor) !important;
+            }
+            background-color: map-get($checked, disabled-bgcolor) !important;
+        }
+}
+/**
+ * 生成正方形方法
+ * @method square
+ * @param {Length} $size 定义正方形的边长
+ */
+@mixin square($size) {
+	width: $size;
+	height: $size;
+}
+// Placeholder text
+// --------------------------------------------------
+
+@mixin placeholder($color: #bbb, $text-indent: 0) {
+  &::-moz-placeholder { // Firefox 19+
+    color: $color;
+  }
+  &:-ms-input-placeholder {
+    color: $color;
+  }
+  &::-webkit-input-placeholder {
+    color: $color;
+    // Safari placeholder margin issue
+    text-indent: $text-indent;
+  }
+}
+/**
+ * 定义显示类型为伸缩盒
+ * @method flexbox
+ * @param {String} $flexbox 默认值：flex，取值与最新原生语法一致
+ */
+@mixin flexbox($flexbox: flex) {
+    @if $flexbox == flex {
+        display: -webkit-box;
+        display: -webkit-flex;
+		display: -ms-flexbox;
+        display: flex;
+    } @else {
+        display: -webkit-inline-box;
+        display: -webkit-inline-flex;
+        display: inline-flex;
+    }
+}
+/**
+ * 定义伸缩盒子元素如何分配空间
+ * @method flex
+ * @param {String} $flex 默认值：1，取值与最新原生语法一致
+ * @param {String} $direction 默认值: row
+ */
+@mixin flex($flex: 1, $direction: row) {
+    -webkit-box-flex: $flex;
+    -webkit-flex: $flex;
+	-ms-flex:$flex;
+    flex: $flex;
+    // 修复Android Browser4.3及以下，iOS Safari6.1及以下按比例分配错误的问题
+    @if $direction == column {
+        height: .1px;
+    } @else {
+        width: .1px;
+    }
+}
+
+/**
+ * 定义伸缩盒子元素的排版顺序
+ * @method order
+ * @param {String} $order 默认值：1，取值与最新原生语法一致
+ */
+@mixin order($order: 1) {
+    -webkit-box-ordinal-group: $order;
+    -webkit-order: $order;
+    order: $order;
+}
+
+/**
+ * 定义伸缩盒子元素的流动方向
+ * @method flex-direction
+ * @param {String} $flex-direction 默认值：row，取值与最新原生语法一致
+ */
+@mixin flex-direction($flex-direction: row) {
+    @if $flex-direction == row {
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+		-ms-flex-direction:row;
+    } @else if $flex-direction == column {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+		 -ms-flex-direction:column;
+    } @else if $flex-direction == row-reverse {
+        -webkit-box-orient: horizontal;
+		-ms-flex-direction:row-reverse;
+    } @else if $flex-direction == column-reverse {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: column-reverse;
+    }
+    -webkit-flex-direction: $flex-direction;
+    flex-direction: $flex-direction;
+}
+
+/**
+ * 定义伸缩盒子元素溢出排版
+ * @method flex-wrap
+ * @param {String} $flex-wrap 默认值：nowrap，取值与最新原生语法一致
+ */
+@mixin flex-wrap($flex-wrap: nowrap) {
+    @if $flex-wrap == nowrap {
+        -webkit-box-lines: single;
+    } @else {
+        -webkit-box-lines: multiple;
+    }
+    -webkit-flex-wrap: $flex-wrap;
+	-ms-flex-wrap: $flex-wrap;
+    flex-wrap: $flex-wrap;
+}
+
+/**
+ * 定义伸缩盒子元素的水平对齐方式
+ * @method justify-content
+ * @param {String} $justify-content 默认值：center，取值与最新原生语法一致
+ */
+@mixin justify-content($justify-content: center) {
+    @if $justify-content == center {
+        -webkit-box-pack: center;
+		-ms-flex-pack: center;
+    } @else if $justify-content == flex-start {
+        -webkit-box-pack: start;
+		-ms-flex-pack:start;
+    } @else if $justify-content == flex-end {
+        -webkit-box-pack: end;
+		-ms-flex-pack:end;
+    } @else if $justify-content == space-between {
+        -webkit-box-pack: justify;
+		-ms-flex-pack:justify;
+    }
+    -webkit-justify-content: $justify-content;
+    justify-content: $justify-content;
+}
+
+/**
+ * 定义伸缩盒子元素的垂直对齐方式
+ * @method align-items
+ * @param {String} $align-items 默认值：center，取值与最新原生语法一致
+ *box-align:xxx  09版
+  *align-items:xxxxxxx 12版
+ */
+@mixin align-items($align-items: center) {
+    @if $align-items == center {
+        -webkit-box-align: center;
+		-ms-flex-align: center;
+    } @else if $align-items == flex-start {
+        -webkit-box-align: start;
+		-ms-flex-align: start;
+    } @else if $align-items == flex-end {
+        -webkit-box-align: end;
+		-ms-flex-align: end;
+    } @else {
+        -webkit-box-align: $align-items;
+		-ms-flex-align:  $align-items;
+    }
+    -webkit-align-items: $align-items;
+	-ms-align-items: $align-items;
+    align-items: $align-items;
+}
+
+/**
+ * 定义伸缩盒子元素自身的垂直对齐方式
+ * @method align-self
+ * @param {String} $align-self 默认值：center，取值与最新原生语法一致
+ */
+@mixin align-self($align-self: center) {
+    -webkit-align-self: $align-self;
+    align-self: $align-self;
+}

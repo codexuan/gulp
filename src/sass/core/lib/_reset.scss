@@ -1,0 +1,28 @@
+blockquote,button,dd,dl,fieldset,figure,form,h1,h2,h3,h4,h5,h6,input,legend,ol,p,pre,td,textarea,th,ul,li,dl,dt,dd,div,img,menu {
+    margin: 0;
+    padding: 0;
+}
+h1,h2,h3,h4,h5,h6,small,big,input,textarea,button,select {
+    font-size: inherit;
+}
+address,cite,dfn,em,i,optgroup,var {
+    font-style: normal;
+}
+fieldset,img {
+    border: 0;
+    vertical-align: middle;
+}
+ul,ol,li{
+    list-style: none;
+}
+dl,dt,dd{
+    font-weight: normal;
+}
+article,aside,details,figcaption,figure,footer,header,main,menu,nav,section,summary {
+    display: block;
+}
+a,a:focus{ outline: none ; }
+// remove input and textarea pink border for FF
+input:required:invalid, input:focus:invalid, textarea:required:invalid, textarea:focus:invalid{ box-shadow:none;}
+// Remove input x for IE
+::-ms-clear{ display: none; }

@@ -1,0 +1,72 @@
+
+$fonts-dir: './dist/fonts/';
+
+@font-face{
+    font-family: "iconFont";
+    src:  url('#{$fonts-dir}/iconFonts.eot?');
+    src:  url('#{$fonts-dir}/iconFonts.eot?#iefix') format('embedded-opentype'),
+      url('#{$fonts-dir}/iconFonts.ttf?') format('truetype'),
+      url('#{$fonts-dir}/iconFonts.woff?') format('woff'),
+      url('#{$fonts-dir}/iconFonts.svg?#iconFonts') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+[class^="iconfont-"],[class*="iconfont-"]  {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'Lenovoiconfont' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.iconfont-weight-light:before {
+  content: "\e900";
+}
+.iconfont-add-account:before {
+  content: "\e901";
+}
+.iconfont-check-mark:before {
+  content: "\e902";
+}
+.iconfont-manage-user:before {
+  content: "\e903";
+}
+.iconfont-star:before {
+  content: "\e904";
+}
+.iconfont-label:before {
+  content: "\e905";
+}
+.iconfont-sheets:before {
+  content: "\e906";
+}
+.iconfont-factory:before {
+  content: "\e907";
+}
+.iconfont-add-user:before {
+  content: "\e908";
+}
+.iconfont-manage-account:before {
+  content: "\e909";
+}
+.iconfont-pen:before {
+  content: "\e90a";
+}
+.iconfont-plus:before {
+  content: "\e90b";
+}
+.iconfont-view-date:before {
+  content: "\e90c";
+}
+.iconfont-exclamation-points:before {
+  content: "\e90d";
+}
+.iconfont-whatsapp:before {
+  content: "\ea93";
+}
