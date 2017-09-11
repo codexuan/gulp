@@ -1,24 +1,39 @@
+
 var path = require('path'),
     gulp = require('gulp'),
     logSymbols = require('log-symbols'),
+    // 自动处理全部错误信息，防止因为错误而导致 watch 不正常工作
     plumber = require('gulp-plumber'),
     mapStream = require('map-stream'),
+    // 工具库
     gutil = require('gulp-util'),
+    // 更新通知
     notify = require('gulp-notify'),
+    // 重命名
     rename = require('gulp-rename'),
+    // JS拼接
     concat = require('gulp-concat'),
+    // web 服务
     connect = require('gulp-connect'),
-    del = require('del');
-// 编译压缩sass
+    // 清空文件夹 or gulp-clean
+    del = require('del'),
+    // 只编译改过的文件，加快速度
+    changed = require('gulp-changed');
+	
+// 编译sass
 var sass = require('gulp-sass'),
-    minifyCss = require('gulp-minify-css'),
+// gulp-minify-css package has been deprecated, please use gulp-clean-css instead.
+    minifyCss = require('gulp-clean-css'),
 // 去掉css注释
     stripCssComments = require('gulp-strip-css-comments'),
-    cssbeautify = require('cssbeautify');
-// var autoprefixer = require('gulp-autoprefixer');
+// 格式化css
+    cssbeautify = require('cssbeautify'),
+// 自动添加兼容前缀
+    autoprefixer = require('gulp-autoprefixer');
 
 // 压缩script
 var uglify = require('gulp-uglify'),
+// 检查js语法
     jshint = require('gulp-jshint');
 // 压缩image
 var imagemin = require('gulp-imagemin');
@@ -58,7 +73,25 @@ gulp.task("sass",function(){
             logPath(file);
             cb(null, file);
         }))
-        .pipe(sass())
+        .pipe(changed(cssDest,function(){extension:'.css'}))        
+        /*
+          browsers参数：
+          ● last 2 versions: 主流浏览器的最新两个版本
+          ● last 1 Chrome versions: 谷歌浏览器的最新版本
+          ● last 2 Explorer versions: IE的最新两个版本
+          ● last 3 Safari versions: 苹果浏览器最新三个版本
+          ● Firefox >= 20: 火狐浏览器的版本大于或等于20
+          ● iOS 7: IOS7版本
+          ● Firefox ESR: 最新ESR版本的火狐
+          ● > 5%: 全球统计有超过5%的使用率
+          cascade: true/false; 是否美化属性值
+          remove: true/false; 是否去掉不必要的前缀，默认true
+        */
+        .pipe(autoprefixer({
+          browsers: ['last 2 versions','last 2 Explorer versions'],
+          cascade: false
+        }))
+        .pipe(sass())        
         .pipe(stripCssComments())
         // css格式化、美化（因为有f2ehint，故在此不再做语法等的检查与修复）
         .pipe(mapStream(function(file, cb) {
@@ -75,11 +108,14 @@ gulp.task("sass",function(){
 
             cb(null, file);
         }))
-        .pipe(rename(function(path){
-          path.dirname = '';
-          path.extname = '.min.css';
+        .pipe(rename({ extname: '.min.css'}))
+        .pipe(minifyCss({ 
+            advanced: false,//类型：Boolean 默认：true [是否开启高级优化（合并选择器等）]
+            compatibility: 'ie7',//保留ie7及以下兼容写法 类型：String 默认：''or'*' [启用兼容模式； 'ie7'：IE7兼容模式，'ie8'：IE8兼容模式，'*'：IE9+兼容模式]
+            keepBreaks: true,//类型：Boolean 默认：false [是否保留换行]
+            keepSpecialComments: '*'
+            //保留所有特殊前缀 当你用autoprefixer生成的浏览器前缀，如果不加这个参数，有可能将会删除你的部分前缀
         }))
-        .pipe(minifyCss())
         .pipe(gulp.dest(function(file){
           return cssDest;
         }));
@@ -90,8 +126,8 @@ gulp.task("jshint",function(){
       .pipe(jshint())
       .pipe(jshint.reporter());
 });
-// 合并压缩js
-gulp.task("script",function(){
+// 合并压缩js前先进行代码检查
+gulp.task("script",["jshint"],function(){
   gulp.src(scriptSrc)
       .pipe(plumber({
           errorHandler: reportError
@@ -190,3 +226,4 @@ function reportError(error) {
     // Prevent the 'watch' task from stopping
     this.emit('end');
 }
+
